@@ -1140,7 +1140,7 @@ function buyItem(item) {
   else if (
     item.type === 3
   ) {
-    givemoney *= 2;
+    givemoney *= 1.5;
     item.price += 100;
   }
 
