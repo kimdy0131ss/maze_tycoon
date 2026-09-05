@@ -80,9 +80,17 @@ let lastManualStepTime = 0;
 // ========================================
 
 function setup() {
-  createCanvas(windowWidth, windowHeight);
+  let canvas = createCanvas(windowWidth, windowHeight);
+
+  canvas.style("display", "block");
+  canvas.style("position", "fixed");
+  canvas.style("left", "0");
+  canvas.style("top", "0");
+  canvas.style("width", "100vw");
+  canvas.style("height", "100vh");
 
   document.body.style.margin = "0";
+  document.body.style.padding = "0";
   document.body.style.overflow = "hidden";
 
   createElement(
