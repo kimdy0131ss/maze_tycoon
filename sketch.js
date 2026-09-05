@@ -144,8 +144,6 @@ function setup() {
 
   btn = createButton("상점");
 
-  btn.size(60, 30);
-
   btn.mousePressed(toggleStore);
 
 
@@ -154,8 +152,6 @@ function setup() {
   // ========================================
 
   moneyBtn = createButton("돈");
-
-  moneyBtn.size(60, 30);
 
   moneyBtn.mousePressed(() => {
     money += 0.5 * givemoney;
@@ -168,8 +164,6 @@ function setup() {
 
   imgBtn = createButton("⚙️ 설정");
 
-  imgBtn.size(80, 30);
-
   imgBtn.mousePressed(toggleSettings);
 
 
@@ -177,7 +171,6 @@ function setup() {
   createStore();
 
   calculateCellSize();
-
   positionUI();
 
   newMap();
@@ -209,8 +202,7 @@ function windowResized() {
 // ========================================
 
 function calculateCellSize() {
-
-  let bottomSpace = 60;
+  let bottomSpace = 85;
 
   let availableWidth = windowWidth - 20;
 
@@ -240,32 +232,65 @@ function calculateCellSize() {
 // ========================================
 
 function positionUI() {
+  const margin = 20;
+  const buttonW = 150;
+  const buttonH = 55;
+  const gap = 15;
 
-  if (!moneyText) {
-    return;
-  }
-
-  let bottomY =
-    windowHeight - 40;
-
+  // 상점 버튼
   btn.position(
-    10,
-    bottomY
+    margin,
+    height - buttonH - margin
   );
 
+  btn.size(
+    buttonW,
+    buttonH
+  );
+
+  btn.style("font-size", "20px");
+  btn.style("font-weight", "bold");
+
+
+  // 돈 버튼
   moneyBtn.position(
-    80,
-    bottomY
+    margin + buttonW + gap,
+    height - buttonH - margin
   );
 
+  moneyBtn.size(
+    buttonW,
+    buttonH
+  );
+
+  moneyBtn.style("font-size", "20px");
+  moneyBtn.style("font-weight", "bold");
+
+
+  // 설정 버튼
   imgBtn.position(
-    windowWidth / 2 - 40,
-    bottomY
+    width / 2 - buttonW / 2,
+    height - buttonH - margin
   );
 
+  imgBtn.size(
+    buttonW,
+    buttonH
+  );
+
+  imgBtn.style("font-size", "20px");
+  imgBtn.style("font-weight", "bold");
+
+
+  // 돈 표시
   moneyText.position(
-    windowWidth - 150,
-    15
+    width - 200,
+    20
+  );
+
+  moneyText.style(
+    "font-size",
+    "24px"
   );
 }
 
@@ -275,12 +300,11 @@ function positionUI() {
 // ========================================
 
 function createSettings() {
-
   settingsPanel = createDiv();
 
   settingsPanel.size(
-    260,
-    390
+    340,
+    500
   );
 
   settingsPanel.style(
@@ -295,12 +319,12 @@ function createSettings() {
 
   settingsPanel.style(
     "border-radius",
-    "10px"
+    "12px"
   );
 
   settingsPanel.style(
     "padding",
-    "15px"
+    "20px"
   );
 
   settingsPanel.style(
@@ -331,7 +355,12 @@ function createSettings() {
 
   title.style(
     "margin",
-    "0 0 15px 0"
+    "0 0 20px 0"
+  );
+
+  title.style(
+    "font-size",
+    "24px"
   );
 
 
@@ -514,7 +543,7 @@ function createSettings() {
     rainbowSpeedRow
   );
 
-  rainbowSlider.size(90);
+  rainbowSlider.size(120);
 
 
   // ========================================
@@ -568,7 +597,6 @@ function createSettings() {
 
 
   autoMode.changed(() => {
-
     mode =
       autoMode.value();
 
@@ -578,11 +606,6 @@ function createSettings() {
     lastManualStepTime =
       millis();
   });
-
-
-  // ========================================
-  // 여기에는 처음에는 최단거리 모드가 없음
-  // ========================================
 
 
   // ========================================
@@ -597,8 +620,13 @@ function createSettings() {
   );
 
   closeBtn.size(
-    225,
-    30
+    295,
+    40
+  );
+
+  closeBtn.style(
+    "font-size",
+    "16px"
   );
 
   closeBtn.mousePressed(
@@ -614,12 +642,9 @@ function createSettings() {
 
 // ========================================
 // 최단거리 설정 생성
-// 구매했을 때만 호출됨
 // ========================================
 
 function createShortestPathSetting() {
-
-  // 이미 생성되어 있으면 다시 만들지 않음
   if (shortestPathRow) {
     return;
   }
@@ -691,28 +716,21 @@ function createShortestPathSetting() {
 
 
   shortestPathMode.changed(() => {
-
     shortestPathIndex = 0;
-
     shortestPath = [];
 
 
     if (
       shortestPathMode.checked()
     ) {
-
       calculateShortestPath();
-
     } else {
-
       shortestPath = [];
-
       shortestPathIndex = 0;
     }
   });
 
 
-  // 최단거리 색상 설정도 구매 후에만 등장
   shortestPathColor =
     createColorRow(
       "최단거리 색",
@@ -732,7 +750,6 @@ function createColorRow(
   label,
   defaultColor
 ) {
-
   let row = createDiv();
 
   row.parent(
@@ -761,7 +778,7 @@ function createColorRow(
 
   row.style(
     "margin-bottom",
-    "10px"
+    "12px"
   );
 
 
@@ -772,6 +789,11 @@ function createColorRow(
     );
 
   t.parent(row);
+
+  t.style(
+    "font-size",
+    "16px"
+  );
 
 
   let color =
@@ -794,25 +816,32 @@ function createColorRow(
 // ========================================
 
 function positionSettingsPanel() {
-
   if (!settingsPanel) {
     return;
   }
 
+  let panelWidth = 340;
+
   let panelHeight =
     shortestPathUnlocked
-      ? 440
-      : 390;
+      ? 550
+      : 500;
+
+  panelHeight =
+    min(
+      panelHeight,
+      windowHeight - 40
+    );
 
 
   settingsPanel.size(
-    260,
+    panelWidth,
     panelHeight
   );
 
 
   settingsPanel.position(
-    (windowWidth - 260) / 2,
+    (windowWidth - panelWidth) / 2,
     (windowHeight - panelHeight) / 2
   );
 }
@@ -823,13 +852,11 @@ function positionSettingsPanel() {
 // ========================================
 
 function toggleSettings() {
-
   settingsOpen =
     !settingsOpen;
 
 
   if (settingsOpen) {
-
     storeOpen = false;
 
     storePanel.hide();
@@ -839,7 +866,6 @@ function toggleSettings() {
     settingsPanel.show();
 
   } else {
-
     settingsPanel.hide();
   }
 }
@@ -850,13 +876,12 @@ function toggleSettings() {
 // ========================================
 
 function createStore() {
-
   storePanel =
     createDiv();
 
   storePanel.size(
-    420,
-    300
+    500,
+    380
   );
 
   storePanel.style(
@@ -871,12 +896,12 @@ function createStore() {
 
   storePanel.style(
     "border-radius",
-    "10px"
+    "12px"
   );
 
   storePanel.style(
     "padding",
-    "15px"
+    "20px"
   );
 
   storePanel.style(
@@ -907,14 +932,18 @@ function createStore() {
 
   title.style(
     "margin",
-    "0 0 15px 0"
+    "0 0 20px 0"
+  );
+
+  title.style(
+    "font-size",
+    "24px"
   );
 
 
   for (
     let item of storeItems
   ) {
-
     let row =
       createDiv();
 
@@ -944,7 +973,7 @@ function createStore() {
 
     row.style(
       "margin-bottom",
-      "10px"
+      "15px"
     );
 
 
@@ -956,6 +985,11 @@ function createStore() {
 
     t.parent(row);
 
+    t.style(
+      "font-size",
+      "17px"
+    );
+
     item.priceText = t;
 
 
@@ -965,6 +999,16 @@ function createStore() {
       );
 
     buyBtn.parent(row);
+
+    buyBtn.size(
+      100,
+      38
+    );
+
+    buyBtn.style(
+      "font-size",
+      "15px"
+    );
 
     buyBtn.mousePressed(
       () => buyItem(item)
@@ -980,8 +1024,13 @@ function createStore() {
   );
 
   closeBtn.size(
-    390,
-    30
+    455,
+    40
+  );
+
+  closeBtn.style(
+    "font-size",
+    "16px"
   );
 
   closeBtn.mousePressed(
@@ -1000,14 +1049,27 @@ function createStore() {
 // ========================================
 
 function positionStorePanel() {
-
   if (!storePanel) {
     return;
   }
 
+  let panelWidth = 500;
+
+  let panelHeight =
+    min(
+      380,
+      windowHeight - 40
+    );
+
+
+  storePanel.size(
+    panelWidth,
+    panelHeight
+  );
+
   storePanel.position(
-    (windowWidth - 420) / 2,
-    (windowHeight - 300) / 2
+    (windowWidth - panelWidth) / 2,
+    (windowHeight - panelHeight) / 2
   );
 }
 
@@ -1017,13 +1079,10 @@ function positionStorePanel() {
 // ========================================
 
 function buyItem(item) {
-
-  // 이미 최단거리 모드를 구매한 경우
   if (
     item.type === 4 &&
     shortestPathUnlocked
   ) {
-
     errorMessage =
       "이미 구매한 아이템입니다!";
 
@@ -1037,7 +1096,6 @@ function buyItem(item) {
   if (
     money < item.price
   ) {
-
     errorMessage =
       "돈이 부족합니다!";
 
@@ -1058,9 +1116,7 @@ function buyItem(item) {
   if (
     item.type === 1
   ) {
-
     c_speed += 3;
-
     item.price += 50;
   }
 
@@ -1072,9 +1128,7 @@ function buyItem(item) {
   else if (
     item.type === 2
   ) {
-
     money_level += 0.5;
-
     item.price *= 2;
   }
 
@@ -1086,9 +1140,7 @@ function buyItem(item) {
   else if (
     item.type === 3
   ) {
-
     givemoney *= 2;
-
     item.price += 100;
   }
 
@@ -1100,22 +1152,17 @@ function buyItem(item) {
   else if (
     item.type === 4
   ) {
-
     shortestPathUnlocked =
       true;
 
 
-    // 상점 표시 변경
     item.priceText.html(
       `${item.name} - 구매 완료`
     );
 
 
-    // ★ 구매한 순간 설정에 추가
     createShortestPathSetting();
 
-
-    // 최단거리 계산
     calculateShortestPath();
   }
 
@@ -1123,7 +1170,6 @@ function buyItem(item) {
   if (
     item.type !== 4
   ) {
-
     item.priceText.html(
       `${item.name} - ${item.price}원`
     );
@@ -1136,13 +1182,11 @@ function buyItem(item) {
 // ========================================
 
 function toggleStore() {
-
   storeOpen =
     !storeOpen;
 
 
   if (storeOpen) {
-
     settingsOpen = false;
 
     settingsPanel.hide();
@@ -1152,7 +1196,6 @@ function toggleStore() {
     storePanel.show();
 
   } else {
-
     storePanel.hide();
   }
 }
@@ -1163,7 +1206,6 @@ function toggleStore() {
 // ========================================
 
 function generateMaze(x, y) {
-
   let shuffledDirections =
     shuffle([
       ...directions
@@ -1173,7 +1215,6 @@ function generateMaze(x, y) {
   for (
     let direction of shuffledDirections
   ) {
-
     let nx =
       x + direction[0];
 
@@ -1188,7 +1229,6 @@ function generateMaze(x, y) {
       ny < h - 1 &&
       mapData[ny][nx] === 1
     ) {
-
       let wallX =
         x +
         direction[0] / 2;
@@ -1219,7 +1259,6 @@ function generateMaze(x, y) {
 // ========================================
 
 function newMap() {
-
   mapData = [];
 
 
@@ -1228,7 +1267,6 @@ function newMap() {
     r < h;
     r++
   ) {
-
     mapData[r] = [];
 
 
@@ -1237,7 +1275,6 @@ function newMap() {
       c < w;
       c++
     ) {
-
       mapData[r][c] = 1;
     }
   }
@@ -1273,7 +1310,6 @@ function newMap() {
     shortestPathMode &&
     shortestPathMode.checked()
   ) {
-
     calculateShortestPath();
   }
 }
@@ -1284,7 +1320,6 @@ function newMap() {
 // ========================================
 
 function initMaze() {
-
   isFinished = false;
 
   path = [];
@@ -1296,7 +1331,6 @@ function initMaze() {
     r < h;
     r++
   ) {
-
     visited[r] = [];
 
 
@@ -1305,7 +1339,6 @@ function initMaze() {
       c < w;
       c++
     ) {
-
       visited[r][c] =
         false;
     }
@@ -1328,24 +1361,19 @@ function initMaze() {
 // ========================================
 
 function calculateShortestPath() {
-
   shortestPath = [];
-
   shortestPathIndex = 0;
 
 
   if (
     !mapData.length
   ) {
-
     return;
   }
 
 
   let queue = [];
-
   let visitedBFS = [];
-
   let parent = [];
 
 
@@ -1354,7 +1382,6 @@ function calculateShortestPath() {
     r < h;
     r++
   ) {
-
     visitedBFS[r] = [];
     parent[r] = [];
 
@@ -1364,7 +1391,6 @@ function calculateShortestPath() {
       c < w;
       c++
     ) {
-
       visitedBFS[r][c] =
         false;
 
@@ -1390,7 +1416,6 @@ function calculateShortestPath() {
   while (
     queue.length > 0
   ) {
-
     let current =
       queue.shift();
 
@@ -1399,30 +1424,22 @@ function calculateShortestPath() {
       current.r === goal.r &&
       current.c === goal.c
     ) {
-
       found = true;
-
       break;
     }
 
 
     let bfsDirections = [
-
       { r: 0, c: 1 },
-
       { r: 1, c: 0 },
-
       { r: 0, c: -1 },
-
       { r: -1, c: 0 }
-
     ];
 
 
     for (
       let d of bfsDirections
     ) {
-
       let nextR =
         current.r + d.r;
 
@@ -1438,7 +1455,6 @@ function calculateShortestPath() {
         mapData[nextR][nextC] === 0 &&
         !visitedBFS[nextR][nextC]
       ) {
-
         visitedBFS[nextR][nextC] =
           true;
 
@@ -1472,7 +1488,6 @@ function calculateShortestPath() {
   while (
     current !== null
   ) {
-
     shortestPath.push({
       r: current.r,
       c: current.c
@@ -1483,7 +1498,6 @@ function calculateShortestPath() {
       current.r === start.r &&
       current.c === start.c
     ) {
-
       break;
     }
 
@@ -1508,7 +1522,6 @@ function calculateShortestPath() {
 function getRainbowColor(
   offset
 ) {
-
   let rainbowSpeed =
     rainbowSlider.value();
 
@@ -1535,7 +1548,6 @@ function getRainbowColor(
 // ========================================
 
 function draw() {
-
   colorMode(
     RGB,
     255
@@ -1564,7 +1576,6 @@ function draw() {
     !storeOpen &&
     c_speed > 0
   ) {
-
     let stepsPerSecond =
       map(
         c_speed,
@@ -1585,17 +1596,13 @@ function draw() {
       lastStepTime >=
       stepInterval
     ) {
-
       if (
         shortestPathUnlocked &&
         shortestPathMode &&
         shortestPathMode.checked()
       ) {
-
         bfsStep();
-
       } else {
-
         dfsStep();
       }
 
@@ -1616,7 +1623,6 @@ function draw() {
     !settingsOpen &&
     !storeOpen
   ) {
-
     let stepsPerSecond =
       map(
         c_speed,
@@ -1637,7 +1643,6 @@ function draw() {
       lastManualStepTime >=
       stepInterval
     ) {
-
       let dr = 0;
       let dc = 0;
 
@@ -1646,28 +1651,24 @@ function draw() {
         keyIsDown(UP_ARROW) ||
         keyIsDown(87)
       ) {
-
         dr = -1;
 
       } else if (
         keyIsDown(DOWN_ARROW) ||
         keyIsDown(83)
       ) {
-
         dr = 1;
 
       } else if (
         keyIsDown(LEFT_ARROW) ||
         keyIsDown(65)
       ) {
-
         dc = -1;
 
       } else if (
         keyIsDown(RIGHT_ARROW) ||
         keyIsDown(68)
       ) {
-
         dc = 1;
       }
 
@@ -1676,7 +1677,6 @@ function draw() {
         dr !== 0 ||
         dc !== 0
       ) {
-
         manualMove(
           dr,
           dc
@@ -1706,13 +1706,11 @@ function draw() {
     r < h;
     r++
   ) {
-
     for (
       let c = 0;
       c < w;
       c++
     ) {
-
       let x =
         mazeX +
         c * CELL;
@@ -1727,7 +1725,6 @@ function draw() {
       if (
         mapData[r][c] === 1
       ) {
-
         fill(
           rainbowMode.checked()
             ? getRainbowColor(0)
@@ -1735,7 +1732,6 @@ function draw() {
         );
 
       } else {
-
         fill(
           rainbowMode.checked()
             ? getRainbowColor(180)
@@ -1760,7 +1756,6 @@ function draw() {
       if (
         visited[r][c]
       ) {
-
         fill(
           rainbowMode.checked()
             ? getRainbowColor(60)
@@ -1788,7 +1783,6 @@ function draw() {
     shortestPathMode &&
     shortestPathMode.checked()
   ) {
-
     drawShortestPath();
   }
 
@@ -1802,7 +1796,6 @@ function draw() {
     i < path.length - 1;
     i++
   ) {
-
     let p =
       path[i];
 
@@ -1889,7 +1882,6 @@ function draw() {
   if (
     path.length > 0
   ) {
-
     let player =
       path[path.length - 1];
 
@@ -1929,7 +1921,6 @@ function draw() {
     errorTime <
     1500
   ) {
-
     fill(
       230,
       60,
@@ -1941,7 +1932,7 @@ function draw() {
     text(
       errorMessage,
       10,
-      windowHeight - 65
+      windowHeight - 80
     );
   }
 }
@@ -1952,11 +1943,9 @@ function draw() {
 // ========================================
 
 function drawShortestPath() {
-
   if (
     shortestPath.length === 0
   ) {
-
     return;
   }
 
@@ -1974,7 +1963,6 @@ function drawShortestPath() {
   for (
     let p of shortestPath
   ) {
-
     rect(
       mazeX +
       p.c * CELL +
@@ -2000,13 +1988,10 @@ function drawShortestPath() {
 // ========================================
 
 function dfsStep() {
-
   if (
     path.length === 0
   ) {
-
     isFinished = true;
-
     return;
   }
 
@@ -2021,10 +2006,8 @@ function dfsStep() {
     current.r === goal.r &&
     current.c === goal.c
   ) {
-
     money +=
       10 * money_level;
-
 
     newMap();
 
@@ -2044,7 +2027,6 @@ function dfsStep() {
   for (
     let d of dirs
   ) {
-
     let nextR =
       current.r + d.r;
 
@@ -2060,7 +2042,6 @@ function dfsStep() {
       mapData[nextR][nextC] === 0 &&
       !visited[nextR][nextC]
     ) {
-
       visited[nextR][nextC] =
         true;
 
@@ -2087,20 +2068,16 @@ function dfsStep() {
 // ========================================
 
 function bfsStep() {
-
   if (
     shortestPath.length === 0
   ) {
-
     calculateShortestPath();
 
 
     if (
       shortestPath.length === 0
     ) {
-
       isFinished = true;
-
       return;
     }
   }
@@ -2110,7 +2087,6 @@ function bfsStep() {
     shortestPathIndex >=
     shortestPath.length
   ) {
-
     return;
   }
 
@@ -2143,10 +2119,8 @@ function bfsStep() {
     current.r === goal.r &&
     current.c === goal.c
   ) {
-
     money +=
       10 * money_level;
-
 
     newMap();
   }
@@ -2161,11 +2135,9 @@ function manualMove(
   dr,
   dc
 ) {
-
   if (
     path.length === 0
   ) {
-
     return;
   }
 
@@ -2187,7 +2159,6 @@ function manualMove(
     nextC < 0 ||
     nextC >= w
   ) {
-
     return;
   }
 
@@ -2195,7 +2166,6 @@ function manualMove(
   if (
     mapData[nextR][nextC] === 1
   ) {
-
     return;
   }
 
@@ -2207,7 +2177,6 @@ function manualMove(
     path[path.length - 2].r === nextR &&
     path[path.length - 2].c === nextC
   ) {
-
     path.pop();
 
     lastManualStepTime =
@@ -2237,10 +2206,8 @@ function manualMove(
     nextR === goal.r &&
     nextC === goal.c
   ) {
-
     money +=
       10 * money_level;
-
 
     newMap();
   }
