@@ -74,6 +74,9 @@ let goal = { r: h - 2, c: w - 2 };
 let lastStepTime = 0;
 let lastManualStepTime = 0;
 
+let bfsAgents = [];
+let bfsSplitFlash = [];
+
 
 // ========================================
 // SETUP
@@ -724,6 +727,16 @@ function createShortestPathSetting() {
       shortestPathMode.checked()
     ) {
       calculateShortestPath();
+
+
+      if (
+        mode === "auto"
+      ) {
+        initMaze();
+
+        lastStepTime =
+          millis();
+      }
     } else {
       shortestPath = [];
       shortestPathIndex = 0;
@@ -1353,6 +1366,17 @@ function initMaze() {
 
   visited[start.r][start.c] =
     true;
+
+
+  bfsAgents = [
+    {
+      path: [
+        { r: start.r, c: start.c }
+      ]
+    }
+  ];
+
+  bfsSplitFlash = [];
 }
 
 
@@ -1546,6 +1570,16 @@ function getRainbowColor(
 // ========================================
 // DRAW
 // ========================================
+
+function isBFSActive() {
+  return (
+    mode === "auto" &&
+    shortestPathUnlocked &&
+    shortestPathMode &&
+    shortestPathMode.checked()
+  );
+}
+
 
 function draw() {
   colorMode(
@@ -1791,35 +1825,39 @@ function draw() {
   // 지나온 경로
   // ========================================
 
-  for (
-    let i = 0;
-    i < path.length - 1;
-    i++
+  if (
+    !isBFSActive()
   ) {
-    let p =
-      path[i];
+    for (
+      let i = 0;
+      i < path.length - 1;
+      i++
+    ) {
+      let p =
+        path[i];
 
 
-    fill(
-      rainbowMode.checked()
-        ? getRainbowColor(120)
-        : pathColor.value()
-    );
+      fill(
+        rainbowMode.checked()
+          ? getRainbowColor(120)
+          : pathColor.value()
+      );
 
 
-    rect(
-      mazeX +
-      p.c * CELL +
-      CELL * 0.17,
+      rect(
+        mazeX +
+        p.c * CELL +
+        CELL * 0.17,
 
-      mazeY +
-      p.r * CELL +
-      CELL * 0.17,
+        mazeY +
+        p.r * CELL +
+        CELL * 0.17,
 
-      CELL * 0.66,
+        CELL * 0.66,
 
-      CELL * 0.66
-    );
+        CELL * 0.66
+      );
+    }
   }
 
 
@@ -1880,6 +1918,81 @@ function draw() {
   // ========================================
 
   if (
+    isBFSActive()
+  ) {
+    if (
+      bfsAgents.length > 0
+    ) {
+      for (
+        let agent of bfsAgents
+      ) {
+        let head =
+          agent.path[
+            agent.path.length - 1
+          ];
+
+
+        fill(
+          rainbowMode.checked()
+            ? getRainbowColor(150)
+            : playerColor.value()
+        );
+
+
+        rect(
+          mazeX +
+          head.c * CELL +
+          CELL * 0.125,
+
+          mazeY +
+          head.r * CELL +
+          CELL * 0.125,
+
+          CELL * 0.75,
+
+          CELL * 0.75
+        );
+      }
+
+
+      // ========================================
+      // 갈림길 이펙트
+      // ========================================
+
+      for (
+        let f of bfsSplitFlash
+      ) {
+        push();
+
+        noFill();
+
+        stroke(
+          rainbowMode.checked()
+            ? getRainbowColor(200)
+            : playerColor.value()
+        );
+
+        strokeWeight(2);
+
+        ellipse(
+          mazeX +
+          f.c * CELL +
+          CELL / 2,
+
+          mazeY +
+          f.r * CELL +
+          CELL / 2,
+
+          CELL * 1.3,
+
+          CELL * 1.3
+        );
+
+        pop();
+      }
+    }
+
+  } else if (
     path.length > 0
   ) {
     let player =
@@ -2069,61 +2182,113 @@ function dfsStep() {
 
 function bfsStep() {
   if (
-    shortestPath.length === 0
+    bfsAgents.length === 0
   ) {
-    calculateShortestPath();
-
-
-    if (
-      shortestPath.length === 0
-    ) {
-      isFinished = true;
-      return;
-    }
-  }
-
-
-  if (
-    shortestPathIndex >=
-    shortestPath.length
-  ) {
+    isFinished = true;
     return;
   }
 
 
-  let current =
-    shortestPath[
-      shortestPathIndex
+  let newAgents = [];
+  let newFlash = [];
+
+
+  for (
+    let agent of bfsAgents
+  ) {
+    let head =
+      agent.path[
+        agent.path.length - 1
+      ];
+
+
+    // 도착
+
+    if (
+      head.r === goal.r &&
+      head.c === goal.c
+    ) {
+      money +=
+        10 * money_level;
+
+      newMap();
+
+      return;
+    }
+
+
+    let dirs = [
+      { r: 0, c: 1 },
+      { r: 1, c: 0 },
+      { r: 0, c: -1 },
+      { r: -1, c: 0 }
     ];
 
 
-  path.push({
-    r: current.r,
-    c: current.c
-  });
+    let moves = [];
 
 
-  visited[
-    current.r
-  ][
-    current.c
-  ] = true;
+    for (
+      let d of dirs
+    ) {
+      let nextR =
+        head.r + d.r;
+
+      let nextC =
+        head.c + d.c;
 
 
-  shortestPathIndex++;
+      if (
+        nextR >= 0 &&
+        nextR < h &&
+        nextC >= 0 &&
+        nextC < w &&
+        mapData[nextR][nextC] === 0 &&
+        !visited[nextR][nextC]
+      ) {
+        moves.push({
+          r: nextR,
+          c: nextC
+        });
+      }
+    }
 
 
-  // 도착
+    // 갈림길: 이펙트 표시
 
-  if (
-    current.r === goal.r &&
-    current.c === goal.c
-  ) {
-    money +=
-      10 * money_level;
+    if (
+      moves.length > 1
+    ) {
+      newFlash.push({
+        r: head.r,
+        c: head.c
+      });
+    }
 
-    newMap();
+
+    // 갈림길에서 노드 분기
+
+    for (
+      let m of moves
+    ) {
+      visited[m.r][m.c] =
+        true;
+
+      newAgents.push({
+        path:
+          agent.path.concat([
+            m
+          ])
+      });
+    }
   }
+
+
+  bfsAgents =
+    newAgents;
+
+  bfsSplitFlash =
+    newFlash;
 }
 
 
