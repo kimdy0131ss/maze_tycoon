@@ -1815,7 +1815,8 @@ function draw() {
   if (
     shortestPathUnlocked &&
     shortestPathMode &&
-    shortestPathMode.checked()
+    shortestPathMode.checked() &&
+    !isBFSActive()
   ) {
     drawShortestPath();
   }
