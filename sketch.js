@@ -468,7 +468,7 @@ function createSettings() {
   let rainbowText =
     createElement(
       "span",
-      "염병 모드"
+      "무지개 모드"
     );
 
   rainbowText.parent(
@@ -527,7 +527,7 @@ function createSettings() {
   let rainbowSpeedText =
     createElement(
       "span",
-      "염병 속도"
+      "무지개 속도"
     );
 
   rainbowSpeedText.parent(
